@@ -11,27 +11,36 @@ import { Participant } from "../../components/Participant";
 import { styles } from "./styles";
 
 export function Home() {
-  const [participants, setParticipants] = useState<string[]>([])
-  const [participantName, setParticipantName] = useState('')
+  const [participants, setParticipants] = useState<string[]>([]);
+  const [participantName, setParticipantName] = useState("");
 
   function handleParticipantAdd(name: string) {
-    if(participants.includes(name)){
-      return Alert.alert("Tente outro participante", `${name} já está na lista de participantes!`)
+    if (participants.includes(name)) {
+      return Alert.alert(
+        "Tente outro participante",
+        `${name} já está na lista de participantes!`
+      );
     }
-    setParticipants(prevState => [...prevState, name])
+    setParticipants((prevState) => [...prevState, name]);
+    setParticipantName("");
   }
 
   function handleParticipantRemove(name: string) {
-    Alert.alert('Remover', `Você deseja remover o participante ${name}`, [
+    //imutabilidade
+    const filterParticipants = participants.filter(
+      (participant) => participant !== name
+    );
+
+    Alert.alert("Remover", `Você deseja remover o participante ${name}`, [
       {
-        text: 'Sim',
-        onPress: () => Alert.alert('Deletado!')
+        text: "Sim",
+        onPress: () => setParticipants(filterParticipants),
       },
       {
-        text: 'Não',
-        style: 'cancel'
-      }
-    ])
+        text: "Não",
+        style: "cancel",
+      },
+    ]);
   }
   return (
     <View style={styles.container}>
@@ -41,12 +50,16 @@ export function Home() {
       <View style={styles.form}>
         <TextInput
           placeholder="Nome do participante"
-          placeholderTextColor="#6b6b6b" 
-          onChangeText={nameText => setParticipantName(nameText)}
+          placeholderTextColor="#6b6b6b"
+          onChangeText={setParticipantName}
+          value={participantName}
           style={styles.input}
         />
 
-        <TouchableOpacity style={styles.button} onPress={() => handleParticipantAdd(participantName)}>
+        <TouchableOpacity 
+          style={styles.button}
+          onPress={() => handleParticipantAdd(participantName)}
+        >
           <Text style={styles.buttonText}>+</Text>
         </TouchableOpacity>
       </View>
@@ -62,12 +75,11 @@ export function Home() {
         )}
         ListEmptyComponent={() => (
           <Text style={styles.listEmptyText}>
-            Ninguém chegou no evento ainda? Adicione participantes a sua lista de presença
+            Ninguém chegou no evento ainda? Adicione participantes a sua lista
+            de presença
           </Text>
         )}
       />
-
-   
     </View>
   );
 }
